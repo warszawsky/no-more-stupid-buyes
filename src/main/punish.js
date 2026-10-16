@@ -28,11 +28,11 @@ export function sendCloseTabKeys(platform = process.platform) {
 
 /**
  * target: the shopping session the watcher reported, with `source` either
- *   { kind: 'extension', client, tabId } or { kind: 'window' }.
+ *   { kind: 'extension', client, tabId, ... } or { kind: 'window' }.
  * Returns how it was handled: 'extension' | 'keys' | 'failed' | 'nothing'.
  */
 export async function punish(target, { action, bridge, sendKeys = sendCloseTabKeys }) {
-  if (action !== 'close-tab' || !target) return 'nothing';
+  if (action === 'nothing' || !target) return 'nothing';
   const src = target.source || {};
   if (src.kind === 'extension' && bridge.closeTab(src.client, src.tabId)) return 'extension';
   return (await sendKeys()) ? 'keys' : 'failed';

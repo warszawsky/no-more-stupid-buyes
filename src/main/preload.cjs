@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld('duck', {
   ready: () => ipcRenderer.send('ready'),
   setIgnoreMouse: ignore => ipcRenderer.send('set-ignore', ignore),
   punish: session => ipcRenderer.invoke('punish', session),
+  finaleStart: session => ipcRenderer.invoke('finale-start', session),
+  finaleEnd: () => ipcRenderer.invoke('finale-end'),
   outcome: (kind, session) => ipcRenderer.send('outcome', { kind, session }),
   menu: () => ipcRenderer.send('menu'),
 });

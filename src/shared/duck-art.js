@@ -102,14 +102,15 @@ const X = 4; // horizontal offset so the muzzle flash fits on the right
  *   eye        'open' | 'closed' | 'happy' | 'angry'
  *   beak       'shut' | 'open'
  *   gun        0 none | 1 aiming | 2 aiming + muzzle flash
- *   wing       'rest' | 'up'
+ *   wing       'rest' | 'up' | 'down'
  *   tail       0|1   tail flick
  *   blush      bool
+ *   peck       bool  head jabbed forward (closing a tab with the beak)
  */
 export function drawDuck(pose = {}) {
   const {
     bob = 0, step = null, sit = false, eye = 'open', beak = 'shut',
-    gun = 0, wing = 'rest', tail = 0, blush = false,
+    gun = 0, wing = 'rest', tail = 0, blush = false, peck = false,
   } = pose;
   const g = new Grid();
   const dy = bob + (sit ? 3 : 0);
@@ -137,48 +138,54 @@ export function drawDuck(pose = {}) {
   g.ellipse(X + 17, 28 + dy, 10, 6.5, 'w');
   g.ellipse(X + 17, 28 + dy, 10, 6.5, 's', (x, y) => y >= 32 + dy);
 
-  // neck + head
-  g.rect(X + 21, 15 + dy, X + 28, 25 + dy, 'w');
-  g.ellipse(X + 25, 12 + dy, 7, 6.5, 'w');
+  // neck + head; a peck leans the head forward and down, the neck follows
+  const hx = peck ? 3 : 0;
+  const hd = dy + (peck ? 2 : 0);
+  const HX = X + hx;
+  for (let r = 15 + hd; r <= 25 + dy; r++) {
+    const ox = Math.round(hx * (25 + dy - r) / (25 + dy - 15 - hd));
+    g.rect(X + 21 + ox, r, X + 28 + ox, r, 'w');
+  }
+  g.ellipse(HX + 25, 12 + hd, 7, 6.5, 'w');
 
   // bandana: crown down to the brow, a knot at the back and two short tails
-  g.ellipse(X + 25, 12 + dy, 7, 6.5, 'b', (x, y) => y <= 8 + dy || (x <= X + 21 && y <= 10 + dy));
-  g.rect(X + 16, 8 + dy, X + 18, 10 + dy, 'b');
-  g.rect(X + 14, 11 + dy + t, X + 15, 13 + dy + t, 'b');
-  g.set(X + 13, 13 + dy + t, 'b');
-  g.rect(X + 17, 11 + dy, X + 18, 14 + dy, 'b');
-  for (let x = X + 22; x <= X + 28; x++) g.set(x, 6 + dy, 'B');
-  g.set(X + 21, 7 + dy, 'B'); g.set(X + 29, 7 + dy, 'B');
-  g.set(X + 17, 9 + dy, 'B');
+  g.ellipse(HX + 25, 12 + hd, 7, 6.5, 'b', (x, y) => y <= 8 + hd || (x <= HX + 21 && y <= 10 + hd));
+  g.rect(HX + 16, 8 + hd, HX + 18, 10 + hd, 'b');
+  g.rect(HX + 14, 11 + hd + t, HX + 15, 13 + hd + t, 'b');
+  g.set(HX + 13, 13 + hd + t, 'b');
+  g.rect(HX + 17, 11 + hd, HX + 18, 14 + hd, 'b');
+  for (let x = HX + 22; x <= HX + 28; x++) g.set(x, 6 + hd, 'B');
+  g.set(HX + 21, 7 + hd, 'B'); g.set(HX + 29, 7 + hd, 'B');
+  g.set(HX + 17, 9 + hd, 'B');
   if (eye === 'angry') {
     // bandana pulled down into a brow that slopes toward the beak = scowl
-    g.set(X + 26, 9 + dy, 'b'); g.set(X + 27, 9 + dy, 'b');
-    g.set(X + 28, 10 + dy, 'b'); g.set(X + 29, 10 + dy, 'b');
+    g.set(HX + 26, 9 + hd, 'b'); g.set(HX + 27, 9 + hd, 'b');
+    g.set(HX + 28, 10 + hd, 'b'); g.set(HX + 29, 10 + hd, 'b');
   }
 
   // beak
-  g.rect(X + 31, 12 + dy, X + 36, 12 + dy, 'y');
-  g.rect(X + 31, 13 + dy, X + 37, 13 + dy, 'y');
+  g.rect(HX + 31, 12 + hd, HX + 36, 12 + hd, 'y');
+  g.rect(HX + 31, 13 + hd, HX + 37, 13 + hd, 'y');
   if (beak === 'open') {
-    g.rect(X + 31, 15 + dy, X + 36, 15 + dy, 'Y');
-    g.rect(X + 31, 16 + dy, X + 35, 16 + dy, 'Y');
+    g.rect(HX + 31, 15 + hd, HX + 36, 15 + hd, 'Y');
+    g.rect(HX + 31, 16 + hd, HX + 35, 16 + hd, 'Y');
   } else {
-    g.rect(X + 31, 14 + dy, X + 37, 14 + dy, 'Y');
-    g.rect(X + 31, 15 + dy, X + 36, 15 + dy, 'Y');
+    g.rect(HX + 31, 14 + hd, HX + 37, 14 + hd, 'Y');
+    g.rect(HX + 31, 15 + hd, HX + 36, 15 + hd, 'Y');
   }
 
   // eye
   if (eye === 'closed') {
-    g.rect(X + 26, 11 + dy, X + 28, 11 + dy, 'k');
+    g.rect(HX + 26, 11 + hd, HX + 28, 11 + hd, 'k');
   } else if (eye === 'happy') {
-    g.set(X + 26, 11 + dy, 'k'); g.set(X + 27, 10 + dy, 'k'); g.set(X + 28, 11 + dy, 'k');
+    g.set(HX + 26, 11 + hd, 'k'); g.set(HX + 27, 10 + hd, 'k'); g.set(HX + 28, 11 + hd, 'k');
   } else if (eye === 'angry') {
-    g.rect(X + 27, 11 + dy, X + 28, 12 + dy, 'k');
+    g.rect(HX + 27, 11 + hd, HX + 28, 12 + hd, 'k');
   } else {
-    g.rect(X + 27, 10 + dy, X + 28, 11 + dy, 'k');
-    g.set(X + 28, 10 + dy, 'e');
+    g.rect(HX + 27, 10 + hd, HX + 28, 11 + hd, 'k');
+    g.set(HX + 28, 10 + hd, 'e');
   }
-  if (blush) { g.set(X + 27, 13 + dy, 'p'); g.set(X + 28, 13 + dy, 'p'); }
+  if (blush) { g.set(HX + 27, 13 + hd, 'p'); g.set(HX + 28, 13 + hd, 'p'); }
 
   // wing
   if (gun) {
@@ -186,8 +193,14 @@ export function drawDuck(pose = {}) {
     g.ellipse(X + 22, 27 + dy, 5, 3, 's');
     g.tri(X + 22, 24 + dy, X + 29, 23 + dy, X + 27, 28 + dy, 's');
   } else if (wing === 'up') {
-    g.ellipse(X + 15, 25 + dy, 5, 3, 's');
-    g.tri(X + 11, 24 + dy, X + 7, 17 + dy, X + 15, 23 + dy, 's');
+    // raised high over the back (flapping, startled, dangling)
+    g.ellipse(X + 16, 25 + dy, 5, 2.5, 's');
+    g.tri(X + 20, 25 + dy, X + 5, 11 + dy, X + 11, 25 + dy, 's');
+    g.tri(X + 20, 25 + dy, X + 5, 11 + dy, X + 15, 17 + dy, 's');
+  } else if (wing === 'down') {
+    // bottom of a wing beat
+    g.ellipse(X + 16, 27 + dy, 5, 2.5, 's');
+    g.tri(X + 20, 27 + dy, X + 8, 37 + dy, X + 12, 27 + dy, 's');
   } else {
     g.ellipse(X + 16, 27 + dy, 6, 3.5, 's');
     g.tri(X + 7, 25 + dy, X + 13, 24 + dy, X + 12, 30 + dy, 's');

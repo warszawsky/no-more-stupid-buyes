@@ -1,7 +1,7 @@
 {
   "name": "no-more-stupid-buys",
   "productName": "No More Stupid Buys",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A pixel duck that lives on your taskbar and pulls a gun when you open an online store.",
   "repository": "github:warszawsky/no-more-stupid-buyes",
   "type": "module",

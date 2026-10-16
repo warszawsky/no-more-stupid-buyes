@@ -18,7 +18,7 @@ export const DEFAULT_STORES = [
     keywords: AMAZON_TLDS.map(t => `Amazon.${t}`),
   },
   { name: 'eBay', domains: ['ebay.*'], keywords: ['| eBay'] },
-  { name: 'AliExpress', domains: ['aliexpress.com', 'aliexpress.ru', 'aliexpress.us'], keywords: ['AliExpress', 'Aliexpress'] },
+  { name: 'AliExpress', domains: ['aliexpress.com', 'aliexpress.us'], keywords: ['AliExpress', 'Aliexpress'] },
   { name: 'Temu', domains: ['temu.com'], keywords: ['| Temu', '- Temu', 'Temu |'] },
   { name: 'SHEIN', domains: ['shein.com', 'shein.co.uk'], keywords: ['SHEIN'] },
   { name: 'Etsy', domains: ['etsy.com'], keywords: ['| Etsy', '- Etsy'] },
@@ -27,35 +27,39 @@ export const DEFAULT_STORES = [
   { name: 'Best Buy', domains: ['bestbuy.com', 'bestbuy.ca'], keywords: ['| Best Buy', '- Best Buy'] },
   { name: 'iHerb', domains: ['iherb.com'], keywords: ['iHerb'] },
   { name: 'ASOS', domains: ['asos.com'], keywords: ['| ASOS'] },
-  { name: 'Joom', domains: ['joom.com', 'joom.ru'], keywords: ['Joom'] },
-  { name: 'OZON', domains: ['ozon.ru', 'ozon.kz', 'ozon.by'], keywords: ['OZON', 'Ozon.ru'] },
-  { name: 'Wildberries', domains: ['wildberries.ru', 'wildberries.by', 'wildberries.kz', 'wb.ru'], keywords: ['Wildberries'] },
-  { name: 'Яндекс Маркет', domains: ['market.yandex.ru', 'market.yandex.kz'], keywords: ['Яндекс Маркет', 'Яндекс.Маркет', 'Yandex Market'] },
-  { name: 'Мегамаркет', domains: ['megamarket.ru'], keywords: ['Мегамаркет', 'МегаМаркет'] },
-  { name: 'Lamoda', domains: ['lamoda.ru', 'lamoda.kz', 'lamoda.by'], keywords: ['Lamoda', 'LAMODA'] },
-  { name: 'Авито', domains: ['avito.ru'], keywords: ['Авито', 'Avito'] },
-  { name: 'М.Видео', domains: ['mvideo.ru'], keywords: ['М.Видео'] },
-  { name: 'Эльдорадо', domains: ['eldorado.ru'], keywords: ['Эльдорадо'] },
-  { name: 'DNS', domains: ['dns-shop.ru'], keywords: ['DNS Shop', 'ДНС'] },
-  { name: 'Ситилинк', domains: ['citilink.ru'], keywords: ['Ситилинк'] },
-  { name: 'Kaspi', domains: ['kaspi.kz'], keywords: ['Kaspi.kz', 'Kaspi Магазин'] },
+  { name: 'Joom', domains: ['joom.com'], keywords: ['Joom'] },
+  // Ukraine. Plain words that are also ordinary nouns ("Розетка" is a socket,
+  // "Епіцентр" an epicentre) are left out of the title keywords on purpose.
   { name: 'Rozetka', domains: ['rozetka.com.ua'], keywords: ['ROZETKA', 'Rozetka'] },
-  { name: 'Steam', domains: ['store.steampowered.com'], keywords: [' on Steam', ' в Steam'] },
+  { name: 'Prom.ua', domains: ['prom.ua'], keywords: ['Prom.ua', 'PROM.UA'] },
+  { name: 'OLX', domains: ['olx.*'], keywords: ['OLX', 'Olx'] },
+  { name: 'Епіцентр', domains: ['epicentrk.ua'], keywords: ['Епіцентр К', 'Епіцентрі К', 'Epicentr K', 'epicentrk.ua'] },
+  { name: 'Comfy', domains: ['comfy.ua'], keywords: ['COMFY', 'Comfy.ua'] },
+  { name: 'Фокстрот', domains: ['foxtrot.com.ua'], keywords: ['Фокстрот', 'FOXTROT', 'Foxtrot'] },
+  { name: 'АЛЛО', domains: ['allo.ua'], keywords: ['АЛЛО', 'Allo.ua', 'allo.ua'] },
+  { name: 'MOYO', domains: ['moyo.ua'], keywords: ['MOYO', 'Moyo.ua'] },
+  { name: 'Kasta', domains: ['kasta.ua'], keywords: ['Kasta', 'KASTA'] },
+  { name: 'MAKEUP', domains: ['makeup.com.ua'], keywords: ['MAKEUP.com.ua', 'Makeup.com.ua'] },
+  { name: 'EVA', domains: ['eva.ua'], keywords: ['EVA.UA', 'eva.ua'] },
+  { name: 'Intertop', domains: ['intertop.ua'], keywords: ['INTERTOP', 'Intertop'] },
+  { name: 'Answear', domains: ['answear.ua'], keywords: ['Answear', 'ANSWEAR'] },
+  { name: 'Shafa', domains: ['shafa.ua'], keywords: ['Shafa.ua', 'SHAFA'] },
+  { name: 'Steam', domains: ['store.steampowered.com'], keywords: [' on Steam', ' у Steam', ' в Steam'] },
 ];
 
 // Title keyword matches are ignored on these pages (case-insensitive), so
 // googling "amazon.com gorilla couch" or watching a review doesn't count.
 export const DEFAULT_IGNORE_TITLES = [
-  'Google Search', 'Поиск в Google', 'Яндекс: нашлось', '— Яндекс:', 'Bing', 'DuckDuckGo',
-  'YouTube', 'Wikipedia', 'Википедия', 'Reddit', 'Twitch', 'ChatGPT', 'Claude',
+  'Google Search', 'Пошук Google', 'Поиск в Google', 'Bing', 'DuckDuckGo',
+  'YouTube', 'Wikipedia', 'Вікіпедія', 'Википедия', 'Reddit', 'Twitch', 'ChatGPT', 'Claude',
 ];
 
 const BROWSER_EXES = new Set([
-  'chrome', 'msedge', 'firefox', 'opera', 'opera_gx', 'brave', 'vivaldi', 'browser', 'yandex',
+  'chrome', 'msedge', 'firefox', 'opera', 'opera_gx', 'brave', 'vivaldi',
   'arc', 'safari', 'chromium', 'chromium-browser', 'google-chrome', 'google-chrome-stable',
   'microsoft-edge', 'zen', 'librewolf', 'floorp', 'waterfox', 'thorium', 'whale', 'naver whale',
 ]);
-const BROWSER_NAMES = /chrome|edge|firefox|opera|brave|vivaldi|yandex|яндекс|safari|chromium|^arc$|zen browser|librewolf|floorp|waterfox|thorium/i;
+const BROWSER_NAMES = /chrome|edge|firefox|opera|brave|vivaldi|safari|chromium|^arc$|zen browser|librewolf|floorp|waterfox|thorium/i;
 
 export function isBrowser(owner) {
   if (!owner) return false;

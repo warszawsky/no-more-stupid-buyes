@@ -26,7 +26,16 @@ export class Bridge extends EventEmitter {
         let msg;
         try { msg = JSON.parse(data); } catch { return; }
         if (msg.type === 'tab') {
-          this.clients.set(ws, { url: msg.url, title: msg.title, tabId: msg.tabId, focused: !!msg.focused, at: Date.now() });
+          const w = msg.window;
+          const window = w && ['left', 'top', 'width', 'height'].every(k => Number.isFinite(w[k]))
+            ? { left: w.left, top: w.top, width: w.width, height: w.height, state: String(w.state || '') }
+            : undefined;
+          this.clients.set(ws, {
+            url: msg.url, title: msg.title, tabId: msg.tabId, focused: !!msg.focused, at: Date.now(),
+            index: Number.isInteger(msg.index) ? msg.index : undefined,
+            count: Number.isInteger(msg.count) ? msg.count : undefined,
+            window,
+          });
         }
       });
       ws.on('close', () => { this.clients.delete(ws); this.emit('change'); });

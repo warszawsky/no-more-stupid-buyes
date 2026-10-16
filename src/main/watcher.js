@@ -62,7 +62,8 @@ export class Watcher extends EventEmitter {
     const tab = this.bridge?.focusedTab();
     if (tab) {
       const store = matchStore({ url: tab.url }, compiled);
-      return store && { store, bounds: win.bounds, source: { kind: 'extension', client: tab.client, tabId: tab.tabId } };
+      const { client, tabId, index, count, window } = tab;
+      return store && { store, bounds: win.bounds, source: { kind: 'extension', client, tabId, index, count, window } };
     }
     const store = matchStore({ url: win.url, title: win.title }, compiled);
     return store && { store, bounds: win.bounds, source: { kind: 'window' } };

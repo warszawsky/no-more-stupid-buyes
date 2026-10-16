@@ -93,3 +93,12 @@ export function happy() {
   tone({ type: 'triangle', from: 660, dur: 0.08, vol: 0.07 });
   tone({ type: 'triangle', from: 990, dur: 0.12, vol: 0.07, at: 0.09 });
 }
+
+export function peck() {
+  noise({ dur: 0.05, vol: 0.5, from: 3200, to: 900, q: 6 });
+  tone({ type: 'triangle', from: 720, to: 320, dur: 0.06, vol: 0.12 });
+}
+
+export function flap() {
+  noise({ dur: 0.12, vol: 0.1, from: 900, to: 250, q: 0.5 });
+}

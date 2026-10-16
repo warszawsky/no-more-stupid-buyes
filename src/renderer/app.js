@@ -17,11 +17,12 @@ const textEl = bubbleEl.querySelector('.text');
 const timerEl = bubbleEl.querySelector('.timer');
 const burstEl = document.getElementById('burst');
 
-const settings = { lang: 'en', countdown: 5, sound: true, scale: 3 };
+const settings = { lang: 'en', countdown: 5, sound: true, scale: 3, action: 'peck' };
 const L = () => LINES[settings.lang] || LINES.en;
 
 const BODY_X = 22;      // art column the duck turns around
 const MUZZLE = [45, 19]; // art pixel at the end of the barrel
+const BEAK_PECK = 44;    // art column of the beak tip mid-peck
 const GRAVITY = 1400;    // css px / s^2
 const now = () => performance.now();
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -33,10 +34,11 @@ const duck = {
   x: 0, y: 0, vy: 0,       // y = height above the taskbar, css px
   facing: 1,
   zoom: 1, zoomTarget: 1,
-  mode: 'idle',            // idle | walk | run | sit | sleep | held
+  mode: 'idle',            // idle | walk | run | sit | sleep | held | fly
   mood: null,              // null | 'angry' | 'happy'
   alert: false,
   gun: 0,
+  peck: false,
   flashUntil: 0,
   recoilUntil: 0,
   talking: false,
@@ -115,10 +117,14 @@ function poseFor(t) {
       p.wing = 'up';
       p.tail = Math.floor(t / 140) % 2;
       break;
+    case 'fly':
+      p.step = 1;
+      p.wing = Math.floor(t / 85) % 2 ? 'up' : 'down';
+      break;
     default:
       p.bob = duck.y > 0 ? 0 : Math.floor(t / 700) % 2;
   }
-  if (duck.y > 0 && duck.mode !== 'held') { p.wing = 'up'; p.step = 3; }
+  if (duck.y > 0 && duck.mode !== 'held' && duck.mode !== 'fly') { p.wing = 'up'; p.step = 3; }
   if (duck.alert) p.wing = 'up';
   if (duck.mood === 'angry') p.eye = 'angry';
   if (duck.mood === 'happy') { p.eye = 'happy'; p.blush = true; }
@@ -127,6 +133,7 @@ function poseFor(t) {
     delete p.wing;
     if (p.step === undefined) p.bob = Math.floor(t / 1000) % 2;
   }
+  if (duck.peck) p.peck = true;
   if (duck.talking && Math.floor(t / 110) % 2) p.beak = 'open';
   if (p.eye === 'open' && t < duck.blinkUntil) p.eye = 'closed';
   return p;
@@ -147,6 +154,10 @@ function headCss() {
 
 function muzzleCss() {
   return artToCss(MUZZLE[0], MUZZLE[1], artFor(poseFor(now())));
+}
+
+function beakCss() {
+  return artToCss(duck.peck ? BEAK_PECK : BEAK_PECK - 3, 15, artFor(poseFor(now())));
 }
 
 function drawParticles(t, dt) {
@@ -405,6 +416,29 @@ async function threatJob(j) {
 
   // too late
   j.kind = 'shot'; // leaving now doesn't earn a "good choice"
+  setTimer(null);
+  const session = shopping.session;
+  let result = settings.action === 'peck' ? await peckFinale(j, session) : null;
+  if (result === null) result = await shootFinale(j, session); // shoot / threats only / nowhere to fly
+  lastSessionEnd = now();
+  if (result === 'demo') shopping = { active: false, session };
+  if (result === 'extension' || result === 'keys') api.outcome('shot', session);
+
+  await wait(450, j);
+  const line = result === 'demo' ? l.demo
+    : result === 'extension' || result === 'keys' ? l.shot
+      : result === 'left' ? l.relief
+        : l.blank;
+  await say(pick(line));
+  await wait(1800, j);
+  calmDown();
+  await wait(700, j);
+  hideBubble();
+  cooldownUntil = now() + (result === 'extension' || result === 'keys' ? 2500 : 30_000);
+}
+
+async function shootFinale(j, session) {
+  duck.gun = 1;
   duck.flashUntil = now() + 110;
   duck.recoilUntil = now() + 140;
   sfx.bang();
@@ -418,30 +452,81 @@ async function threatJob(j) {
   void canvas.offsetWidth;
   canvas.classList.add('shake');
   spawn('shell', m.x - 30 * duck.facing, m.y, { vx: -90 * duck.facing, vy: -260, gravity: 1200, life: 700, fade: false });
-
-  const session = shopping.session;
-  const result = await api.punish(session);
-  lastSessionEnd = now();
-  if (result === 'demo') shopping = { active: false, session };
-  if (result === 'extension' || result === 'keys') api.outcome('shot', session);
-
   for (let i = 0; i < 6; i++) {
     setTimeout(() => {
       const p = muzzleCss();
       spawn('smoke', p.x + rand(-2, 2), p.y, { vx: rand(-6, 6) + 8 * duck.facing, vy: rand(-40, -25), life: 1400 });
     }, 120 + i * 170);
   }
-  await wait(450, j);
-  const line = result === 'demo' ? l.demo
-    : result === 'extension' || result === 'keys' ? l.shot
-      : result === 'left' ? l.relief
-        : l.blank;
-  await say(pick(line));
-  await wait(1800, j);
-  calmDown();
-  await wait(700, j);
-  hideBubble();
-  cooldownUntil = now() + (result === 'extension' || result === 'keys' ? 2500 : 30_000);
+  return api.punish(session);
+}
+
+// Holster, fly up to the shop tab's close button, peck it shut, glide back
+// down. Returns null when there is nowhere to fly, so the duck shoots instead.
+async function peckFinale(j, session) {
+  const l = L();
+  const plan = await api.finaleStart(session);
+  if (plan.left) return 'left';
+  if (!plan.target) return null;
+  let result = 'left';
+  try {
+    await until(() => window.innerHeight >= plan.height - 2, 1500); // overlay grew
+    duck.gun = 0;
+    duck.zoomTarget = 1;
+    await say(pick(l.peckStart));
+    await wait(500, j);
+    hideBubble();
+    duck.zoom = duck.zoomTarget = 1;
+    const px = pixel() / dpr;
+    const facing = plan.target.x - 44 * px < 0 ? -1 : 1; // keep the body on screen
+    const ty = Math.min(plan.target.y, cssH - 14 * px);  // and the head
+    const dest = { x: plan.target.x - (BEAK_PECK - BODY_X) * px * facing, y: ty - (ART_H - 15.5) * px };
+    duck.mode = 'fly';
+    await flyTo(dest, j);
+    duck.facing = facing;
+    await wait(160, j);
+    for (let i = 0; i < 3; i++) {
+      duck.peck = true;
+      sfx.peck();
+      const b = beakCss();
+      spawn('text', b.x + 10 * facing, b.y - 6, { text: l.peck, size: 15, color: '#ffffff', vx: 25 * facing, vy: -45, life: 650 });
+      if (i === 2) result = await api.punish(session);
+      await wait(110, j);
+      duck.peck = false;
+      await wait(i === 2 ? 380 : 170, j);
+    }
+    await flyTo({ x: duck.x - 90 * facing, y: 0 }, j, true);
+  } finally {
+    duck.peck = false;
+    duck.mode = 'idle';
+    await api.finaleEnd();
+  }
+  return result;
+}
+
+async function flyTo(dest, j, glide = false) {
+  const from = { x: duck.x, y: duck.y };
+  const dist = Math.hypot(dest.x - from.x, dest.y - from.y);
+  const dur = clamp(dist / (glide ? 650 : 950), 0.45, 1.6) * 1000;
+  if (Math.abs(dest.x - from.x) > 4) duck.facing = dest.x > from.x ? 1 : -1;
+  const t0 = now();
+  let nextFlap = 0;
+  for (;;) {
+    await nextFrame();
+    if (j.cancelled) throw CANCEL;
+    const t = now();
+    const k = Math.min(1, (t - t0) / dur);
+    duck.x = from.x + (dest.x - from.x) * (glide ? k * k * (3 - 2 * k) : 1 - (1 - k) ** 3);
+    // climb early on the way up, drop late on the way down
+    duck.y = from.y + (dest.y - from.y) * (glide ? k * k : Math.sin((k * Math.PI) / 2));
+    if (t > nextFlap) { sfx.flap(); nextFlap = t + (glide ? 340 : 170); }
+    if (k >= 1) return;
+  }
+}
+
+async function until(cond, timeout) {
+  const end = now() + timeout;
+  while (!cond() && now() < end) await nextFrame();
 }
 
 async function reliefJob(j) {
@@ -568,7 +653,7 @@ function frame(t) {
   const dt = Math.min(0.05, (t - lastFrame) / 1000);
   lastFrame = t;
 
-  if (duck.mode !== 'held' && (duck.y > 0 || duck.vy > 0)) {
+  if (duck.mode !== 'held' && duck.mode !== 'fly' && (duck.y > 0 || duck.vy > 0)) {
     duck.vy -= GRAVITY * dt;
     duck.y += duck.vy * dt;
     if (duck.y <= 0) { duck.y = 0; duck.vy = 0; }

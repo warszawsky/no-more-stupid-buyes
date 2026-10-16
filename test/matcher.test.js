@@ -11,13 +11,16 @@ test('window titles of real shop pages match', () => {
     ['Amazon.ca : gorilla couch - Google Chrome', 'Amazon'],
     ['Amazon.co.uk Shopping Basket - Personal - Microsoft Edge', 'Amazon'],
     ['Gorilla Couch for sale | eBay - Google Chrome', 'eBay'],
-    ['Диван горилла - купить недорого | AliExpress — Mozilla Firefox', 'AliExpress'],
-    ['Диван горилла купить на OZON по низкой цене - Яндекс Браузер', 'OZON'],
-    ['Диван купить по цене 15 000 ₽ в интернет-магазине Wildberries | 123456 - Google Chrome', 'Wildberries'],
-    ['Диван — купить на Яндекс Маркете - Google Chrome', 'Яндекс Маркет'],
+    ['Диван горила - купити недорого | AliExpress — Mozilla Firefox', 'AliExpress'],
     ['Gorilla Couch - Temu - Google Chrome', 'Temu'],
+    ['Диван-горила – купити в Києві | ROZETKA - Google Chrome', 'Rozetka'],
+    ['Диван горила, ціна 8511 грн — Prom.ua (ID#123456) - Google Chrome', 'Prom.ua'],
+    ['Диван: 5 000 грн. - Меблі Київ на Olx - Google Chrome', 'OLX'],
+    ['Диван купити в Епіцентрі К - Google Chrome', 'Епіцентр'],
+    ['Ноутбук ASUS – купити у Фокстроті - Google Chrome', 'Фокстрот'],
+    ['Смартфон — купити в інтернет-магазині COMFY - Google Chrome', 'Comfy'],
     ['Desktop Duck on Steam - Google Chrome', 'Steam'],
-    ['Desktop Duck в Steam - Google Chrome', 'Steam'],
+    ['Desktop Duck у Steam - Google Chrome', 'Steam'],
     ['Threshold Sofa : Target - Google Chrome', 'Target'],
   ];
   for (const [title, store] of cases) assert.equal(matchTitle(title, c), store, title);
@@ -26,8 +29,12 @@ test('window titles of real shop pages match', () => {
 test('innocent titles do not match', () => {
   const cases = [
     'gorilla couch amazon.com - Google Search - Google Chrome',
+    'диван amazon.com - Пошук Google - Google Chrome',
     'Amazon.com earnings beat expectations - YouTube - Google Chrome',
-    'Ozone layer - Wikipedia - Google Chrome',
+    'Розетка — Вікіпедія - Google Chrome',
+    'Як замінити розетку своїми руками - Google Chrome',
+    'Епіцентр землетрусу - новини - Google Chrome',
+    'Joomla 5 templates - Google Chrome',
     'Amazon rainforest facts - Google Chrome',
     'New Tab - Google Chrome',
     'Steam Community :: Desktop Duck - Google Chrome',
@@ -43,8 +50,10 @@ test('ignore words are whole words, so "Climbing" is not "Bing"', () => {
 test('URLs match by domain, including country TLDs and subdomains', () => {
   assert.equal(matchUrl('https://www.amazon.ca/dp/B0GWRT/', c), 'Amazon');
   assert.equal(matchUrl('https://smile.amazon.co.uk/gp/cart', c), 'Amazon');
-  assert.equal(matchUrl('https://www.ozon.ru/product/divan-123/', c), 'OZON');
-  assert.equal(matchUrl('https://market.yandex.ru/product--divan/1', c), 'Яндекс Маркет');
+  assert.equal(matchUrl('https://rozetka.com.ua/ua/divan/p123/', c), 'Rozetka');
+  assert.equal(matchUrl('https://prom.ua/ua/p123-divan.html', c), 'Prom.ua');
+  assert.equal(matchUrl('https://www.olx.ua/d/uk/obyavlenie/divan.html', c), 'OLX');
+  assert.equal(matchUrl('https://epicentrk.ua/ua/shop/divan.html', c), 'Епіцентр');
   assert.equal(matchUrl('https://store.steampowered.com/app/123/Desktop_Duck/', c), 'Steam');
 });
 
@@ -53,7 +62,7 @@ test('URLs that only look like shops do not match', () => {
   assert.equal(matchUrl('https://www.google.com/search?q=amazon.com', c), null);
   assert.equal(matchUrl('https://notamazon.com/', c), null);
   assert.equal(matchUrl('https://amazonaws.com/', c), null);
-  assert.equal(matchUrl('https://yandex.ru/search/?text=ozon', c), null);
+  assert.equal(matchUrl('https://www.google.com.ua/search?q=rozetka', c), null);
   assert.equal(matchUrl('https://steamcommunity.com/app/123', c), null);
   assert.equal(matchUrl('chrome://newtab/', c), null);
 });
@@ -78,7 +87,7 @@ test('hostOf ignores non-web schemes and junk', () => {
 
 test('browser detection by exe path or app name', () => {
   assert.ok(isBrowser({ name: 'Google Chrome', path: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' }));
-  assert.ok(isBrowser({ name: 'Yandex', path: 'C:\\Users\\u\\AppData\\Local\\Yandex\\YandexBrowser\\Application\\browser.exe' }));
+  assert.ok(isBrowser({ name: 'Microsoft Edge', path: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe' }));
   assert.ok(isBrowser({ name: 'Firefox', path: '/usr/lib/firefox/firefox' }));
   assert.ok(isBrowser({ name: 'Safari', path: '/Applications/Safari.app' }));
   assert.ok(isBrowser({ name: 'Arc', path: '/Applications/Arc.app' }));

@@ -66,11 +66,12 @@ test('extension URL wins over the window title', async () => {
   await w.tick(); await w.tick();
   assert.equal(events.length, 0);
 
-  tab = { url: 'https://www.ozon.ru/product/1', tabId: 9, focused: true, client };
+  const window = { left: 0, top: 0, width: 1920, height: 1040, state: 'maximized' };
+  tab = { url: 'https://rozetka.com.ua/ua/p1/', tabId: 9, index: 2, count: 4, window, focused: true, client };
   show(news);
   await w.tick(); await w.tick();
-  assert.equal(events.at(-1).store, 'OZON');
-  assert.deepEqual(events.at(-1).source, { kind: 'extension', client, tabId: 9 });
+  assert.equal(events.at(-1).store, 'Rozetka');
+  assert.deepEqual(events.at(-1).source, { kind: 'extension', client, tabId: 9, index: 2, count: 4, window });
 });
 
 test('punish closes via the extension when it can, else sends keys', async () => {
@@ -79,11 +80,11 @@ test('punish closes via the extension when it can, else sends keys', async () =>
   let keys = 0;
   const sendKeys = async () => { keys++; return true; };
 
-  assert.equal(await punish({ source: { kind: 'extension', client: {}, tabId: 3 } }, { action: 'close-tab', bridge, sendKeys }), 'extension');
+  assert.equal(await punish({ source: { kind: 'extension', client: {}, tabId: 3 } }, { action: 'peck', bridge, sendKeys }), 'extension');
   assert.deepEqual(sent, [3]);
   assert.equal(keys, 0);
 
-  assert.equal(await punish({ source: { kind: 'window' } }, { action: 'close-tab', bridge, sendKeys }), 'keys');
+  assert.equal(await punish({ source: { kind: 'window' } }, { action: 'shoot', bridge, sendKeys }), 'keys');
   assert.equal(keys, 1);
 
   assert.equal(await punish({ source: { kind: 'window' } }, { action: 'nothing', bridge, sendKeys }), 'nothing');

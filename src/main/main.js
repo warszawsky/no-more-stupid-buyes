@@ -8,6 +8,7 @@ import { Bridge } from './bridge.js';
 import { punish } from './punish.js';
 import { compile } from './matcher.js';
 import { DEFAULT_STORES } from './stores.js';
+import { tabCloseTarget } from './tabs.js';
 import { duckPng } from './png.js';
 import { LINES } from '../shared/lines.js';
 
@@ -29,11 +30,16 @@ let win, tray, config, watcher, bridge, compiled;
 let session = 0;
 let demoSession = null;
 let rendererReady = false;
+let expanded = false;  // overlay temporarily covers the whole work area (duck in flight)
+let lastActive = null; // last foreground window, for aiming the demo
 
 const lang = () => {
   const l = config.get('lang');
-  if (l === 'ru' || l === 'en') return l;
-  return /^(ru|uk|be|kk)/i.test(app.getLocale()) ? 'ru' : 'en';
+  if (l === 'uk' || l === 'ru' || l === 'en') return l;
+  const locale = app.getLocale();
+  if (/^uk/i.test(locale)) return 'uk';
+  if (/^ru/i.test(locale)) return 'ru';
+  return 'en';
 };
 const L = () => LINES[lang()];
 
@@ -68,9 +74,22 @@ function stripBounds() {
   return { x: workArea.x, y: workArea.y + workArea.height - STRIP_HEIGHT, width: workArea.width, height: STRIP_HEIGHT };
 }
 
+function overlayBounds() {
+  return expanded ? screen.getPrimaryDisplay().workArea : stripBounds();
+}
+
+function setExpanded(value) {
+  expanded = value;
+  if (win && !win.isDestroyed()) win.setBounds(overlayBounds());
+}
+
+// get-windows reports physical pixels on Windows; Electron works in DIPs, so
+// at 125%/150% scaling the two disagree unless converted.
+const toDip = b => (b && process.platform === 'win32' ? screen.screenToDipRect(null, b) : b);
+
 function createWindow() {
   win = new BrowserWindow({
-    ...stripBounds(),
+    ...overlayBounds(),
     transparent: true,
     backgroundColor: '#00000000',
     frame: false,
@@ -100,7 +119,7 @@ function createWindow() {
   win.loadFile(path.join(__dirname, '../renderer/index.html'));
   win.once('ready-to-show', () => win.showInactive());
 
-  const reposition = () => win && !win.isDestroyed() && win.setBounds(stripBounds());
+  const reposition = () => win && !win.isDestroyed() && win.setBounds(overlayBounds());
   screen.on('display-metrics-changed', reposition);
   screen.on('display-added', reposition);
   screen.on('display-removed', reposition);
@@ -111,26 +130,50 @@ function send(channel, data) {
 }
 
 function rendererSettings() {
-  return { lang: lang(), countdown: config.get('countdown'), sound: config.get('sound'), scale: config.get('scale') };
+  return {
+    lang: lang(), countdown: config.get('countdown'), sound: config.get('sound'),
+    scale: config.get('scale'), action: config.get('action'),
+  };
 }
 
 // Where on our strip the shop window's centre is, so the duck can walk there.
 function targetX(bounds) {
-  if (!bounds) return null;
-  const strip = stripBounds();
-  return Math.round(bounds.x + bounds.width / 2 - strip.x);
+  const b = toDip(bounds);
+  if (!b) return null;
+  return Math.round(b.x + b.width / 2 - stripBounds().x);
+}
+
+// Screen point (DIP) the duck should peck: the shop tab's close button, or
+// null when we can't tell or it is on another monitor.
+function peckTarget(state) {
+  const wa = screen.getPrimaryDisplay().workArea;
+  const src = state.source || {};
+  let t = null;
+  if (src.window) { // from the extension, already in DIPs
+    const w = src.window;
+    t = tabCloseTarget({
+      bounds: { x: w.left, y: w.top, width: w.width, height: w.height },
+      index: src.index, count: src.count, maximized: w.state === 'maximized' || w.state === 'fullscreen',
+    });
+  } else if (state.bounds) {
+    const b = toDip(state.bounds);
+    t = tabCloseTarget({ bounds: b, maximized: b.y <= wa.y });
+  }
+  const inside = t && t.x >= wa.x && t.x <= wa.x + wa.width && t.y >= wa.y && t.y <= wa.y + wa.height;
+  return inside ? t : null;
 }
 
 // Get out of the way of fullscreen games and videos (unless the fullscreen
 // thing is a shop). The desktop itself is "fullscreen" too, so skip it.
 function hideForFullscreen(active) {
+  if (active) lastActive = active;
   if (!win || win.isDestroyed()) return;
   const d = screen.getPrimaryDisplay().bounds;
-  const b = active?.bounds;
+  const b = toDip(active?.bounds);
   const exe = (active?.owner?.path || '').split(/[\\/]/).pop().toLowerCase();
   const fullscreen = !!b && b.x <= d.x && b.y <= d.y && b.x + b.width >= d.x + d.width && b.y + b.height >= d.y + d.height
     && !/^(explorer\.exe|finder)$/.test(exe) && active.owner?.name !== 'Finder';
-  if (fullscreen && !watcher.current.active) {
+  if (fullscreen && !watcher.current.active && !expanded) {
     if (win.isVisible()) win.hide();
   } else if (!win.isVisible()) {
     win.showInactive();
@@ -156,16 +199,9 @@ function snooze(minutes) {
 
 function showExtensionHelp() {
   const dir = extensionDir();
-  const ru = lang() === 'ru';
+  const t = L().extension;
   shell.openPath(dir);
-  dialog.showMessageBox({
-    type: 'info',
-    title: ru ? 'Расширение для браузера' : 'Browser extension',
-    message: ru ? 'Утка видит точный адрес вкладки и сама закрывает её' : 'The duck sees the exact tab URL and closes the tab itself',
-    detail: ru
-      ? `1. Открой chrome://extensions (или edge://extensions, browser://extensions в Яндексе)\n2. Включи «Режим разработчика»\n3. Нажми «Загрузить распакованное» и выбери папку:\n${dir}\n\nБез расширения тоже работает, по заголовку окна.`
-      : `1. Open chrome://extensions (or edge://extensions)\n2. Turn on "Developer mode"\n3. Click "Load unpacked" and pick this folder:\n${dir}\n\nThe duck also works without it, using window titles.`,
-  });
+  dialog.showMessageBox({ type: 'info', title: t.title, message: t.message, detail: t.detail(dir) });
 }
 
 function buildMenu() {
@@ -188,11 +224,17 @@ function buildMenu() {
           ],
         },
     { type: 'separator' },
-    { label: m.action, submenu: [radio(m.actionClose, 'action', 'close-tab'), radio(m.actionNothing, 'action', 'nothing')] },
+    {
+      label: m.action,
+      submenu: [radio(m.actionPeck, 'action', 'peck'), radio(m.actionShoot, 'action', 'shoot'), radio(m.actionNothing, 'action', 'nothing')],
+    },
     { label: m.countdown, submenu: [3, 5, 10].map(n => radio(L().seconds(n), 'countdown', n)) },
     { label: m.size, submenu: [[m.small, 2], [m.medium, 3], [m.large, 4]].map(([label, n]) => radio(label, 'scale', n)) },
     { label: m.sound, type: 'checkbox', checked: config.get('sound'), click: i => config.set('sound', i.checked) },
-    { label: m.language, submenu: [radio('Авто / Auto', 'lang', 'auto'), radio('Русский', 'lang', 'ru'), radio('English', 'lang', 'en')] },
+    {
+      label: m.language,
+      submenu: [radio('Авто / Auto', 'lang', 'auto'), radio('Українська', 'lang', 'uk'), radio('Русский', 'lang', 'ru'), radio('English', 'lang', 'en')],
+    },
     ...(process.platform === 'linux' ? [] : [{
       label: m.autostart, type: 'checkbox', checked: app.getLoginItemSettings().openAtLogin,
       click: i => app.setLoginItemSettings({ openAtLogin: i.checked }),
@@ -231,6 +273,19 @@ function wireIpc() {
   });
 
   ipcMain.on('menu', () => buildMenu().popup());
+
+  // The duck is about to fly up and peck the tab: make room and tell it where.
+  ipcMain.handle('finale-start', (_e, id) => {
+    const demo = id === demoSession;
+    if (!demo && (id !== session || !watcher.current.active)) return { left: true };
+    const wa = screen.getPrimaryDisplay().workArea;
+    let t = peckTarget(demo ? { bounds: lastActive?.bounds } : watcher.current);
+    if (!t && demo) t = { x: wa.x + wa.width / 2, y: wa.y + 60 };
+    if (!t) return { target: null };
+    setExpanded(true);
+    return { target: { x: t.x - wa.x, y: wa.y + wa.height - t.y }, height: wa.height };
+  });
+  ipcMain.handle('finale-end', () => setExpanded(false));
 
   ipcMain.handle('punish', async (_e, id) => {
     if (id === demoSession) { demoSession = null; return 'demo'; }

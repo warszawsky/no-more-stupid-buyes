@@ -6,9 +6,9 @@ import { EventEmitter } from 'node:events';
 import { DEFAULT_IGNORE_TITLES } from './stores.js';
 
 export const DEFAULTS = {
-  lang: 'auto',           // 'auto' | 'ru' | 'en'
+  lang: 'auto',           // 'auto' | 'uk' | 'ru' | 'en'
   countdown: 5,           // seconds the duck gives you
-  action: 'close-tab',    // 'close-tab' | 'nothing' (threats only)
+  action: 'peck',         // 'peck' (fly up, close with the beak) | 'shoot' | 'nothing' (threats only)
   sound: true,
   scale: 3,               // size of one duck pixel, in screen pixels
   disabledStores: [],     // names from the built-in list to ignore, e.g. ["Steam"]
@@ -31,6 +31,7 @@ export class Config extends EventEmitter {
     try {
       const raw = JSON.parse(fs.readFileSync(this.file, 'utf8'));
       this.data = { ...DEFAULTS, ...raw };
+      if (this.data.action === 'close-tab') this.data.action = 'peck'; // name from v0.1
     } catch (err) {
       if (err.code !== 'ENOENT') console.warn(`[config] ${this.file}: ${err.message}, using defaults`);
     }

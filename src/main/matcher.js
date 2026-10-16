@@ -3,18 +3,18 @@
 
 const escape = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-// Keyword as a regex that doesn't fire inside a longer word ("Ozon" must not
-// match "Ozone"). JS \b is ASCII-only, so use Unicode letter lookarounds.
-// Russian words get a short case ending allowance ("на Яндекс Маркете").
+// Keyword as a regex that doesn't fire inside a longer word ("Joom" must not
+// match "Joomla"). JS \b is ASCII-only, so use Unicode letter lookarounds.
+// Cyrillic words get a short case ending allowance ("у Фокстроті").
 function wordRegex(kw, flags) {
   const pre = /^[\p{L}\p{N}]/u.test(kw) ? '(?<![\\p{L}\\p{N}])' : '';
-  const ending = /[а-яё]$/i.test(kw) ? '[а-яё]{0,3}' : '';
+  const ending = /[а-яёіїєґ]$/i.test(kw) ? '[а-яёіїєґ]{0,3}' : '';
   const post = /[\p{L}\p{N}]$/u.test(kw) ? ending + '(?![\\p{L}\\p{N}])' : '';
   return new RegExp(pre + escape(kw) + post, flags);
 }
 
 function domainRegex(d) {
-  // "amazon.*" -> amazon.<any tld>, "ozon.ru" -> exactly that, both with subdomains
+  // "amazon.*" -> amazon.<any tld>, "prom.ua" -> exactly that, both with subdomains
   const body = d.endsWith('.*')
     ? escape(d.slice(0, -2)) + '\\.[a-z]{2,3}(?:\\.[a-z]{2})?'
     : escape(d);

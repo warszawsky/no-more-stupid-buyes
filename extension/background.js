@@ -37,6 +37,10 @@ async function report() {
     title: tab?.title || '',
     tabId: tab?.id,
     focused: !!win?.focused,
+    // where the tab sits, so the duck knows where to fly and peck
+    index: tab?.index,
+    count: win?.tabs?.length,
+    window: win && { left: win.left, top: win.top, width: win.width, height: win.height, state: win.state },
   }));
 }
 
