@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "No More Stupid Buys: duck bridge",
+  "version": "0.1.0",
+  "description": "Tells the desktop duck which tab you are on, so it knows when you are shopping and can close the tab.",
+  "permissions": ["tabs", "alarms"],
+  "background": { "service_worker": "background.js" },
+  "icons": { "128": "icon.png" }
+}

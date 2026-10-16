@@ -1,0 +1,135 @@
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+  font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Ubuntu, sans-serif;
+}
+
+#stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+/* muzzle flash glow, positioned by app.js */
+#burst {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  margin: -160px 0 0 -160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 252, 220, 0.95) 0%, rgba(255, 196, 80, 0.55) 28%, rgba(255, 140, 40, 0) 62%);
+  opacity: 0;
+  pointer-events: none;
+}
+#burst.go {
+  animation: burst 260ms ease-out;
+}
+@keyframes burst {
+  0% { opacity: 1; transform: scale(0.4); }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+
+.bubble {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: 300px;
+  min-width: 90px;
+  padding: 16px 16px 12px;
+  box-sizing: border-box;
+  background: rgba(40, 34, 32, 0.96);
+  border: 2px solid #8b7b6e;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px) scale(0.96);
+  transform-origin: var(--tail-x, 50%) 100%;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+.bubble.show {
+  opacity: 1;
+  transform: none;
+}
+.bubble::after,
+.bubble::before {
+  content: "";
+  position: absolute;
+  left: var(--tail-x, 50%);
+  border: solid transparent;
+  transform: translateX(-50%);
+}
+.bubble::before {
+  bottom: -14px;
+  border-width: 12px 11px 0;
+  border-top-color: #8b7b6e;
+}
+.bubble::after {
+  bottom: -10px;
+  border-width: 10px 9px 0;
+  border-top-color: rgb(40, 34, 32);
+}
+.bubble .name {
+  position: absolute;
+  top: -13px;
+  left: 12px;
+  padding: 1px 10px 2px;
+  background: rgb(40, 34, 32);
+  border: 2px solid #8b7b6e;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+.bubble .text em {
+  font-style: normal;
+  color: #ffb52e;
+}
+.bubble .timer {
+  position: absolute;
+  top: -14px;
+  right: -12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e5484d;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 28px;
+  text-align: center;
+  display: none;
+}
+.bubble .timer.on {
+  display: block;
+}
+.bubble .timer.pulse {
+  animation: pulse 300ms ease-out;
+}
+@keyframes pulse {
+  0% { transform: scale(1.45); }
+  100% { transform: scale(1); }
+}
+
+.shake {
+  animation: shake 280ms linear;
+}
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-6px, 2px); }
+  40% { transform: translate(5px, -3px); }
+  60% { transform: translate(-4px, 1px); }
+  80% { transform: translate(3px, -1px); }
+}

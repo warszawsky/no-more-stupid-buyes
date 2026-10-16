@@ -1,0 +1,75 @@
+{
+  "name": "no-more-stupid-buys",
+  "productName": "No More Stupid Buys",
+  "version": "0.1.0",
+  "description": "A pixel duck that lives on your taskbar and pulls a gun when you open an online store.",
+  "repository": "github:warszawsky/no-more-stupid-buyes",
+  "type": "module",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "icons": "node scripts/make-icons.js",
+    "dist": "npm run icons && electron-builder",
+    "dist:win": "npm run icons && electron-builder --win",
+    "dist:mac": "npm run icons && electron-builder --mac"
+  },
+  "license": "MIT",
+  "build": {
+    "appId": "com.nomorestupidbuys.duck",
+    "productName": "No More Stupid Buys",
+    "npmRebuild": false,
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/get-windows/**"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.lifestyle",
+      "icon": "build/icon.png",
+      "extendInfo": {
+        "LSUIElement": true
+      }
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "build/icon.png"
+    },
+    "extraResources": [
+      {
+        "from": "extension",
+        "to": "extension"
+      }
+    ],
+    "publish": {
+      "provider": "github",
+      "releaseType": "release"
+    }
+  },
+  "dependencies": {
+    "get-windows": "^9.3.0",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "electron": "^44.8.0",
+    "electron-builder": "^26.15.3"
+  }
+}
