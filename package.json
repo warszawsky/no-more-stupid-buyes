@@ -1,7 +1,7 @@
 {
   "name": "no-more-stupid-buys",
   "productName": "No More Stupid Buys",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A pixel duck that lives on your taskbar and pulls a gun when you open an online store.",
   "repository": "github:warszawsky/no-more-stupid-buyes",
   "type": "module",
@@ -14,7 +14,7 @@
     "dist:win": "npm run icons && electron-builder --win",
     "dist:mac": "npm run icons && electron-builder --mac"
   },
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "build": {
     "appId": "com.nomorestupidbuys.duck",
     "productName": "No More Stupid Buys",
@@ -47,7 +47,17 @@
       "icon": "build/icon.png",
       "extendInfo": {
         "LSUIElement": true
-      }
+      },
+      "extraResources": [
+        {
+          "from": "node_modules/electron/dist/LICENSE",
+          "to": "LICENSE.electron.txt"
+        },
+        {
+          "from": "node_modules/electron/dist/LICENSES.chromium.html",
+          "to": "LICENSES.chromium.html"
+        }
+      ]
     },
     "linux": {
       "target": "AppImage",
@@ -62,7 +72,13 @@
     "publish": {
       "provider": "github",
       "releaseType": "release"
-    }
+    },
+    "extraFiles": [
+      {
+        "from": "LICENSE",
+        "to": "LICENSE.txt"
+      }
+    ]
   },
   "dependencies": {
     "get-windows": "^9.3.0",

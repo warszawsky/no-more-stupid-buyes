@@ -1,0 +1,273 @@
+No More Stupid Buys License
+Version 1.0
+
+Copyright (c) 2026 warszawsky
+
+This License is based on the MIT License and adds Section 3. It is not the
+MIT License. The permission in Section 2 is given only on the conditions in
+clauses 3.1 to 3.3; clause 3.4 sets out what happens if they are not met.
+
+
+1. DEFINITIONS
+
+"Licensor" means warszawsky, the copyright holder named above.
+
+"Software" means the Licensor's original work known as No More Stupid Buys,
+first published at github.com/warszawsky/no-more-stupid-buyes, in every
+version, including versions published before this License was added: its
+source code, browser extension, build files and tests, the duck artwork and
+images generated from it, other assets and documentation, and contributions
+accepted under clause 4.5. It includes any copy or portion of that work in
+any form, including in modified versions, forks, compiled builds and
+installers, to the extent protected by copyright or any other right. It
+excludes Third-Party Components.
+
+"Third-Party Components" means material included with or used by the
+Software that others make available under their own license terms, such as
+Electron (including the Chromium, Node.js, FFmpeg and other code it
+contains), installer and runtime code added by build tools such as
+electron-builder and NSIS, and npm packages such as ws, get-windows and
+@mapbox/node-pre-gyp, together with their dependencies.
+
+"person" means an individual or an organisation. "organisation" means any
+legal person, entity or arrangement other than an individual, incorporated
+or not, including a partnership, trust, foundation, state, public body or
+state-owned enterprise. "you" means any person who uses, copies, modifies,
+distributes or otherwise deals with the Software, whether or not that person
+has rights under this License.
+
+"Restricted Territory" means the territory of the Russian Federation and of
+the Republic of Belarus within their internationally recognised borders, and
+any other territory that either of them administers, except any part of
+Ukraine (see UN General Assembly resolutions 68/262 and ES-11/4), Georgia or
+the Republic of Moldova within their internationally recognised borders,
+including any part of those countries occupied by the Russian Federation.
+"Occupied Ukraine" means any territory of Ukraine temporarily occupied by
+the Russian Federation.
+
+"Restricted Person" means:
+  (a) an individual who is ordinarily resident in the Restricted Territory,
+      or who is physically present there other than in transit (including
+      while leaving Occupied Ukraine), but not an individual who is detained
+      or held captive there, or who was deported or forcibly transferred
+      there from Ukraine or another territory occupied by the Russian
+      Federation;
+  (b) an organisation incorporated in, or having its registered office,
+      headquarters, central administration, place of effective management
+      or principal place of business in, the Restricted Territory;
+  (c) the Russian Federation and the Republic of Belarus, including their
+      state, regional and municipal bodies, agencies, armed forces, National
+      Guard, and security, intelligence and law-enforcement services,
+      wherever located; any body of the Union State of Russia and Belarus;
+      and any state corporation or state company of either;
+  (d) any authority, administration or other body established, installed
+      or controlled by the Russian Federation or the Republic of Belarus in
+      any territory outside the Restricted Territory that either of them
+      occupies, effectively controls or claims to have annexed, including
+      Occupied Ukraine;
+  (e) an individual serving in, or under contract with, the armed forces,
+      National Guard or any other armed, paramilitary or volunteer
+      formation, private military company, or security, intelligence or
+      law-enforcement service of or acting for the Russian Federation or
+      the Republic of Belarus, while so serving, except an individual
+      ordinarily resident in Occupied Ukraine who is compelled to serve;
+  (f) an organisation, wherever established, in which one or more persons
+      described in (b) to (f), or individuals described in (a) because they
+      are ordinarily resident in the Restricted Territory, hold,
+      individually or in aggregate, directly or indirectly (including
+      through nominees, trusts or other arrangements), 50 percent or more
+      of the shares, capital, voting rights or rights to profits, or which
+      any of them otherwise controls, directly or indirectly (through
+      ownership, voting rights, the power to appoint or remove its
+      management, contract or otherwise); and
+  (g) any person, to the extent acting on behalf of or at the direction of,
+      or using the Software in performing work or providing services for, a
+      person described in (a) to (f).
+
+No individual is a Restricted Person merely because of their citizenship,
+passport, nationality, ethnic origin, language or place of birth. Living in
+Occupied Ukraine does not by itself make an individual a Restricted Person,
+and being registered under Russian law while located there does not by
+itself make an organisation one. However, an individual who moved to
+Occupied Ukraine after 20 February 2014, having been ordinarily resident in
+the Restricted Territory immediately before, is treated as ordinarily
+resident in the Restricted Territory unless they had earlier been ordinarily
+resident in Ukraine; and an organisation that after that date moved its
+registered office, headquarters, management or principal place of business
+from the Restricted Territory to Occupied Ukraine is treated as not having
+moved it.
+
+Physical presence is a question of fact at the time of the act concerned; a
+VPN, proxy, remote access, or a foreign account, address, telephone number
+or payment method does not change it. An individual is ordinarily resident
+where they actually have their main home, whatever their registered address
+or residence registration; an individual who moves out of the Restricted
+Territory to live elsewhere stops being ordinarily resident there when they
+move.
+
+
+2. PERMISSION
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of the Software, for any period during which that person is not a
+Restricted Person, to deal in the Software without restriction except as
+set out in Section 3, including without limitation the rights to use, copy,
+modify, merge, publish, distribute and/or sell copies of the Software, and
+to permit persons to whom the Software is furnished to do so, subject to
+Section 3 and to the following condition:
+
+The above copyright notice and this License shall be included in all copies
+or substantial portions of the Software.
+
+This permission is granted for the full term of copyright and for the whole
+world except the Restricted Territory, where only the personal use allowed
+by clause 3.1 is permitted.
+
+
+3. RUSSIA AND BELARUS RESTRICTION
+
+3.1 No rights for Restricted Persons or in the Restricted Territory. A
+person has no rights under this License while, and to the extent that, they
+are a Restricted Person. No rights are granted for anything done in the
+Restricted Territory, by anyone, except personal use (including installing
+and copying for that use) by an individual who is not a Restricted Person.
+No one may exercise rights under this License through, for, or in providing
+work or services to, a Restricted Person, and a person's rights do not
+extend to its employees, officers, contractors, agents or affiliates who are
+Restricted Persons, even when they act for it. A person who stops being a
+Restricted Person has the rights in Section 2 from then on, including in
+copies they already hold, unless those rights were terminated under clause
+3.4; nothing done while they were a Restricted Person becomes licensed.
+
+3.2 No supply to Restricted Persons. It is a condition of this License that
+you do not sell, distribute or otherwise make the Software available
+(including over a network), directly or indirectly, to any person you know,
+or have reasonable grounds to believe, is a Restricted Person, will pass it
+to one, or will use it in the Restricted Territory beyond what clause 3.1
+allows. Publishing the Software openly with this License included does not
+by itself breach this clause, provided that:
+  (i) the publication is not directed at Restricted Persons (using the
+      Russian, Belarusian or Ukrainian language does not by itself make it
+      so);
+  (ii) it is not made on or through a platform, store, mirror, registry or
+      other service operated by a Restricted Person or from the Restricted
+      Territory, or intended mainly for users there (for example RuStore,
+      GitFlic, GitVerse or SourceCraft); uploading the Software to such a
+      service is making it available to a Restricted Person; and
+  (iii) where the service offers any means of excluding countries or
+      regions, you use it to exclude the Restricted Territory.
+A failure to meet (iii) alone is treated as a breach of clause 3.3, not of
+this clause.
+
+3.3 Keeping the terms. If you distribute the Software or any substantial
+portion of it, in original or modified form, you must include this License
+with its text unchanged (in source form, as a LICENSE file at the top level
+of the Software; in builds, installers and packaged extensions, as a file
+packaged with them). You may add your own copyright notices and license
+terms for your own modifications next to this License, but not inside it.
+Any terms under which you distribute the Software must be subject to
+Section 3, and any Software distributed with your modifications remains
+subject to this License. You must not state, including in package metadata
+or license identifiers, that the Software or any work containing it is
+licensed under the MIT License or any other license that lacks Section 3.
+Anyone who receives the Software, from any source, receives this License,
+subject to clause 3.1, directly from the Licensor and each contributor, and
+no one can grant broader rights in the Software.
+
+3.4 Consequences. Anything done with the Software by a person while they
+are a Restricted Person, or excluded by clause 3.1, is outside the scope of
+this License, and any license or sublicense purportedly granted to a
+Restricted Person has no effect. Any distribution in breach of clause 3.2
+is outside the scope of this License and was never licensed, and it
+terminates all your rights under this License automatically and
+immediately, without notice, unless the Licensor reinstates them in
+writing. If you breach clause 3.3 (but not clause 3.2), your rights
+terminate unless you cure every such breach within 30 days after you first
+become aware of it or are notified of it by the Licensor, whichever is
+earlier; a timely cure counts as if the breach had not occurred, and
+otherwise only the Licensor can reinstate your rights, in writing. Persons
+who are not Restricted Persons and who received the Software from you keep
+their rights as long as they comply with this License. The Licensor retains
+all rights and remedies under applicable law.
+
+
+4. GENERAL
+
+4.1 Third-Party Components. This License, including Section 3, covers only
+the Software. Third-Party Components, including those bundled in builds and
+installers, are licensed under their own terms, which alone govern your
+rights to use, copy, modify and distribute them; nothing in this License
+limits anyone's rights under those terms. If you distribute them, you must
+comply with those terms, including keeping their notices. Section 5 also
+applies to them as distributed with the Software.
+
+4.2 Licensed, not sold; no implied rights. The Software is licensed, not
+sold. The Licensor does not consent to any copy being put into circulation
+in the Restricted Territory or transferred to a Restricted Person, and a
+copy made, transferred, acquired or held by a Restricted Person or
+otherwise contrary to Section 3 is not lawfully made, acquired or
+possessed. No rights arise by implication or estoppel, including from the
+Licensor making the Software publicly available, not blocking access from
+any place, or not acting against a known use, and no delay in enforcing
+this License is a waiver. No law, decree or other measure of the Russian
+Federation or the Republic of Belarus permitting use of the Software
+without the Licensor's consent is a license under, or extends, this
+License, and no copy made or used under such a measure is licensed
+anywhere.
+
+4.3 Hosting platforms. This License does not withdraw rights that a hosting
+platform's terms of service, as agreed to by the Licensor, give its users to
+view or fork the Software within that platform. Such rights do not cover
+downloading, building, installing, running or distributing it elsewhere.
+
+4.4 Acceptance. You are not required to accept this License, but otherwise
+you have no permission from the Licensor to use, copy, modify or distribute
+the Software. By doing any of these you accept this License, including
+Section 3, as a binding agreement, and represent that you are not a
+Restricted Person.
+
+4.5 Contributions. By submitting a contribution to the Licensor for
+inclusion in the Software (for example by pull request), the contributor
+licenses it to everyone under this License as if they were the Licensor,
+grants the Licensor a perpetual, irrevocable, worldwide, royalty-free right
+to license it on any other terms (including to waive or narrow Section 3),
+and authorises the Licensor to give notices and reinstatements under clause
+3.4 on their behalf. Contributors confirm that they have the right to do
+this. Material offered on other terms is not accepted unless the Licensor
+agrees in writing, and is then a Third-Party Component.
+
+4.6 Changes. The Licensor may at any time, by a notice published with the
+Software, waive, narrow or end any part of Section 3, for everyone or for
+particular persons.
+
+4.7 Earlier labelling. Before this License was added, the "license" field in
+the Software's package.json and package-lock.json said "MIT". That label was
+added in error, without the Licensor's decision, and was never accompanied
+by the MIT License text; the Licensor has not granted the MIT License for
+any version of the Software. Every version of the Software, however and
+whenever obtained, is licensed only under this License.
+
+4.8 Interpretation. Clauses 3.1 to 3.4 are essential conditions of the grant
+in Section 2 and cannot be severed from it. If any part of them cannot be
+enforced against a person in a jurisdiction, it applies to them there to the
+fullest extent permitted; to the extent it cannot apply, this License grants
+that person no rights in that jurisdiction for the acts concerned, and never
+grants rights free of that part. If any other provision of this License is
+unenforceable, it applies to the fullest extent permitted and the rest of
+this License remains in effect. This License is written in English;
+translations and summaries, including in the README, are for information
+only and are not binding.
+
+
+5. NO WARRANTY; LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE AND ANY
+THIRD-PARTY COMPONENTS DISTRIBUTED WITH IT (INCLUDING IN BUILDS AND
+INSTALLERS) ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR SUCH THIRD-PARTY
+COMPONENTS OR THE USE OR OTHER DEALINGS IN THEM, INCLUDING ANY LOSS OF DATA
+OR UNSAVED WORK CAUSED BY THE SOFTWARE CLOSING BROWSER TABS OR WINDOWS.
