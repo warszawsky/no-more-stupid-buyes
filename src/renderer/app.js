@@ -17,8 +17,7 @@ const textEl = bubbleEl.querySelector('.text');
 const timerEl = bubbleEl.querySelector('.timer');
 const burstEl = document.getElementById('burst');
 
-const settings = { lang: 'en', countdown: 5, sound: true, scale: 3, action: 'peck' };
-const L = () => LINES[settings.lang] || LINES.en;
+const settings = { countdown: 5, sound: true, scale: 3, action: 'peck' };
 
 const BODY_X = 22;      // art column the duck turns around
 const MUZZLE = [45, 19]; // art pixel at the end of the barrel
@@ -236,7 +235,7 @@ function say(text, { hold = 0 } = {}) {
   clearTimeout(hideTimer);
   const segments = parseLine(text);
   const total = segments.reduce((n, s) => n + s.t.length, 0);
-  nameEl.textContent = L().name;
+  nameEl.textContent = LINES.name;
   renderTyped(segments, 0);
   bubbleEl.classList.add('show');
   positionBubble();
@@ -370,7 +369,7 @@ async function idleJob(j) {
 }
 
 async function threatJob(j) {
-  const l = L();
+  const l = LINES;
   const again = now() - lastSessionEnd < 60_000;
   warned = false;
   clearTimeout(hideTimer);
@@ -464,7 +463,7 @@ async function shootFinale(j, session) {
 // Holster, fly up to the shop tab's close button, peck it shut, glide back
 // down. Returns null when there is nowhere to fly, so the duck shoots instead.
 async function peckFinale(j, session) {
-  const l = L();
+  const l = LINES;
   const plan = await api.finaleStart(session);
   if (plan.left) return 'left';
   if (!plan.target) return null;
@@ -543,7 +542,7 @@ async function reliefJob(j) {
     const p = headCss();
     spawn('heart', p.x + 8, p.y - 2, { vy: -45, life: 1300 });
   }, 250);
-  await say(pick(L().relief));
+  await say(pick(LINES.relief));
   await wait(2200, j);
   duck.mood = null;
   hideBubble();
@@ -629,7 +628,7 @@ function poke() {
   sfx.quack();
   if (duck.mode === 'sleep' || duck.mode === 'sit') duck.mode = 'idle';
   if (duck.y === 0) duck.vy = 160;
-  say(pick(L().quack), { hold: 1600 });
+  say(pick(LINES.quack), { hold: 1600 });
 }
 
 async function heldJob(j) {
@@ -683,7 +682,7 @@ function frame(t) {
 api.on('settings', s => {
   Object.assign(settings, s);
   sfx.sound.enabled = !!settings.sound;
-  nameEl.textContent = L().name;
+  nameEl.textContent = LINES.name;
 });
 
 api.on('shopping', s => {
@@ -701,7 +700,7 @@ api.on('shopping', s => {
 
 api.on('say', msg => {
   if (job && job.kind !== 'idle') return; // never talk over a threat
-  const text = typeof msg === 'string' ? msg : pick(L().hello);
+  const text = typeof msg === 'string' ? msg : pick(LINES.hello);
   if (duck.mode === 'sleep') duck.mode = 'idle';
   say(text, { hold: 3500 });
 });

@@ -33,15 +33,6 @@ let rendererReady = false;
 let expanded = false;  // overlay temporarily covers the whole work area (duck in flight)
 let lastActive = null; // last foreground window, for aiming the demo
 
-const lang = () => {
-  const l = config.get('lang');
-  if (l === 'uk' || l === 'ru' || l === 'en') return l;
-  const locale = app.getLocale();
-  if (/^uk/i.test(locale)) return 'uk';
-  if (/^ru/i.test(locale)) return 'ru';
-  return 'en';
-};
-const L = () => LINES[lang()];
 
 function recompile() {
   const disabled = new Set(config.get('disabledStores'));
@@ -131,7 +122,7 @@ function send(channel, data) {
 
 function rendererSettings() {
   return {
-    lang: lang(), countdown: config.get('countdown'), sound: config.get('sound'),
+    countdown: config.get('countdown'), sound: config.get('sound'),
     scale: config.get('scale'), action: config.get('action'),
   };
 }
@@ -192,20 +183,20 @@ function startDemo() {
 
 function snooze(minutes) {
   watcher.snooze(minutes === Infinity ? Infinity : minutes * 60_000);
-  const l = L();
+  const l = LINES;
   send('say', minutes === Infinity ? l.snoozeForever : l.snooze.replace('{n}', `{${l.minutes(minutes)}}`));
   buildMenu();
 }
 
 function showExtensionHelp() {
   const dir = extensionDir();
-  const t = L().extension;
+  const t = LINES.extension;
   shell.openPath(dir);
   dialog.showMessageBox({ type: 'info', title: t.title, message: t.message, detail: t.detail(dir) });
 }
 
 function buildMenu() {
-  const m = L().menu;
+  const m = LINES.menu;
   const radio = (label, key, value) => ({
     label, type: 'radio', checked: config.get(key) === value, click: () => config.set(key, value),
   });
@@ -214,7 +205,7 @@ function buildMenu() {
     { type: 'separator' },
     { label: m.demo, click: startDemo },
     watcher.snoozed
-      ? { label: m.resume, click: () => { watcher.resume(); send('say', L().resume); buildMenu(); } }
+      ? { label: m.resume, click: () => { watcher.resume(); send('say', LINES.resume); buildMenu(); } }
       : {
           label: m.pause,
           submenu: [
@@ -228,13 +219,9 @@ function buildMenu() {
       label: m.action,
       submenu: [radio(m.actionPeck, 'action', 'peck'), radio(m.actionShoot, 'action', 'shoot'), radio(m.actionNothing, 'action', 'nothing')],
     },
-    { label: m.countdown, submenu: [3, 5, 10].map(n => radio(L().seconds(n), 'countdown', n)) },
+    { label: m.countdown, submenu: [3, 5, 10].map(n => radio(LINES.seconds(n), 'countdown', n)) },
     { label: m.size, submenu: [[m.small, 2], [m.medium, 3], [m.large, 4]].map(([label, n]) => radio(label, 'scale', n)) },
     { label: m.sound, type: 'checkbox', checked: config.get('sound'), click: i => config.set('sound', i.checked) },
-    {
-      label: m.language,
-      submenu: [radio('Авто / Auto', 'lang', 'auto'), radio('Українська', 'lang', 'uk'), radio('Русский', 'lang', 'ru'), radio('English', 'lang', 'en')],
-    },
     ...(process.platform === 'linux' ? [] : [{
       label: m.autostart, type: 'checkbox', checked: app.getLoginItemSettings().openAtLogin,
       click: i => app.setLoginItemSettings({ openAtLogin: i.checked }),
@@ -311,7 +298,7 @@ app.whenReady().then(async () => {
   watcher = new Watcher({ getWindow: await windowSource(), getCompiled: () => compiled, bridge });
   watcher.on('change', onShoppingChange);
   watcher.on('window', hideForFullscreen);
-  watcher.on('resumed', () => { send('say', L().resume); buildMenu(); });
+  watcher.on('resumed', () => { send('say', LINES.resume); buildMenu(); });
 
   createWindow();
   createTray();

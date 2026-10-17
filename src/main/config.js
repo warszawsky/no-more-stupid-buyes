@@ -6,7 +6,6 @@ import { EventEmitter } from 'node:events';
 import { DEFAULT_IGNORE_TITLES } from './stores.js';
 
 export const DEFAULTS = {
-  lang: 'auto',           // 'auto' | 'uk' | 'ru' | 'en'
   countdown: 5,           // seconds the duck gives you
   action: 'peck',         // 'peck' (fly up, close with the beak) | 'shoot' | 'nothing' (threats only)
   sound: true,
